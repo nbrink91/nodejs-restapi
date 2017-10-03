@@ -15,10 +15,11 @@
   "description": "Demo application for a rest service using NodeJS, MongoDB, and MongooseJS.",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
     "express": "^4.16.0",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
-    "mongoose": "^4.11.13"
+    "mongoose": "^4.11.14"
   },
   "devDependencies": {
     "expect": "^21.2.1",

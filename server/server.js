@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const lodash = require('lodash');
 const {ObjectID} = require('mongodb');
@@ -9,50 +10,67 @@ const {User} = require("./models/user");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 const port = process.env.port || 3000;
 
-app.post('/todos', (req, res) => {
-    const todo = new Todo({
-        text: req.body.text
-    });
+app.post('/todos', async (req, res) => {
+    try {
+        const todo = new Todo({
+            text: req.body.text
+        });
 
-    todo.save().then(
-        todo => res.send(todo)
-    ).catch(e => res.status(400).send(e));
+        await todo.save();
+        res.send({todo});
+    } catch (e) {
+        res.status(400).send(e);
+    }
 });
 
-app.get('/todos', (req, res) => {
-    Todo.find().then(
-        todos => res.send({todos}),
-    ).catch(e => res.status(400).send(e));
+
+app.get('/todos', async (req, res) => {
+    try {
+        const todos = await Todo.find();
+        res.send(todos)
+    } catch (e) {
+        res.status(400).send(e);
+    }
 });
 
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', async (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
         res.status(400).send('ID not valid')
     }
 
-    Todo.findById(id).then(todo => {
+    try {
+        const todo = await Todo.findById(id);
+
         if (!todo) {
             return res.status(404).send(`Unable to find todo with id ${id}`)
         }
         res.send({todo});
-    }).catch(e => res.status(400).send(e))
+    } catch (e) {
+        res.status(400).send(e);
+    }
 });
 
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', async (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
         res.status(400).send('ID not valid')
     }
 
-    Todo.findByIdAndRemove(id).then(todo => {
+    try {
+        const todo = await Todo.findByIdAndRemove(id);
+
         if (!todo) {
             return res.status(404).send(`Unable to find todo with id ${id}`)
         }
+
         res.send({todo});
-    }).catch(e => res.status(400).send(e))
+    } catch (e) {
+        res.status(400).send(e);
+    }
 });
 
 app.patch('/todos/:id', (req, res) => {
