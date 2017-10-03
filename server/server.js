@@ -20,7 +20,7 @@ app.post('/todos', async (req, res) => {
         });
 
         await todo.save();
-        res.send({todo});
+        res.send(todo);
     } catch (e) {
         res.status(400).send(e);
     }
